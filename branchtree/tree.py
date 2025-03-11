@@ -129,7 +129,7 @@ def print_tree(
     for branch in tree:
         if branches and not any(name in branch.name for name in branches):
             continue
-        if contains and not any(
+        if contains and not all(
             has_child_name(branch, branch_name) for branch_name in contains
         ):
             continue
