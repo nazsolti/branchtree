@@ -3,6 +3,12 @@ import subprocess
 from typing import Iterable
 
 
+class GitError(Exception):
+    def __init__(self, code: int) -> None:
+        super().__init__(f"Command failed with code {code}")
+        self.code = code
+
+
 class GitBranch:
     def __init__(self, name: str, sha: str) -> None:
         self.name = name
@@ -22,8 +28,9 @@ def _run_cmd(command: list[str]) -> list[str]:
             for line in subprocess.check_output(command).splitlines()
         ]
     except subprocess.CalledProcessError as exc:
-        print(f"Error: {exc}")
-        return []
+        raise GitError(exc.returncode) from exc
+
+
 
 
 def _check_regex(regex: str | Iterable[str] | None, value: str) -> bool:

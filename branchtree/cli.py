@@ -3,6 +3,7 @@ import sys
 from typing import cast
 
 from . import __version__, tree
+from .git import GitError
 
 
 class BranchtreeCliArgs(argparse.Namespace):
@@ -64,11 +65,19 @@ def print_progress(
     sys.stdout.flush()
 
 
+def print_error(message: str, code=1) -> None:
+    sys.stderr.write(f"Error: {message}\n")
+    sys.exit(code)
+
+
 def get_args() -> BranchtreeCliArgs:
     return cast(BranchtreeCliArgs, parser.parse_args(namespace=BranchtreeCliArgs()))
 
 
 def main() -> None:
     args = get_args()
-    branchtree = tree.build_tree(args.local, args.remote, args.regex)
-    tree.print_tree(branchtree, args.branch, args.contains, args.tag)
+    try:
+        branchtree = tree.build_tree(args.local, args.remote, args.regex)
+        tree.print_tree(branchtree, args.branch, args.contains, args.tag)
+    except GitError as exc:
+        print_error(str(exc), exc.code)
