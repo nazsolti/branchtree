@@ -31,6 +31,12 @@ def _run_cmd(command: list[str]) -> list[str]:
         raise GitError(exc.returncode) from exc
 
 
+def _run_cmd_code(command: list[str]) -> int:
+    try:
+        subprocess.check_call(command)
+        return 0
+    except subprocess.CalledProcessError as exc:
+        return exc.returncode
 
 
 def _check_regex(regex: str | Iterable[str] | None, value: str) -> bool:
@@ -93,3 +99,7 @@ def get_merged(name: str, regex: str | Iterable[str] | None = None) -> list[GitB
     branches = [GitBranch(*line.split()) for line in output]
 
     return [branch for branch in branches if _check_regex(regex, branch.name)]
+
+
+def tag_exists(tag: str) -> bool:
+    return _run_cmd_code(["git", "show-ref", "--tags", tag]) == 0

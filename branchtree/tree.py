@@ -119,12 +119,17 @@ def print_tree(
     contains: list[str] | None = None,
     tag: str | None = None,
 ):
-    merged_branches = git.get_merged(tag) if tag else []
+    if tag:
+        if not git.tag_exists(tag):
+            cli.print_error(f"Tag '{tag}' does not exist.")
+            return
 
-    for merged_branch in merged_branches:
-        for branch in tree:
-            if branch.sha == merged_branch.sha:
-                branch.name += f" (in {tag})"
+        merged_branches = git.get_merged(tag)
+
+        for merged_branch in merged_branches:
+            for branch in tree:
+                if branch.sha == merged_branch.sha:
+                    branch.name += f" (in {tag})"
 
     for branch in tree:
         if branches and not any(name in branch.name for name in branches):
