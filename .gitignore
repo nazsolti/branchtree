@@ -1,0 +1,7 @@
+.idea/
+
+.venv/
+__pycache__/
+branchtree.egg-info/
+build/
+dist/
