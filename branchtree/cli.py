@@ -51,11 +51,11 @@ parser.add_argument(
 
 
 def print_progress(
-    progress: float, header: str = "", width: int = 20, clear=False
+    progress: float, footer: str = "", width: int = 5, clear=False
 ) -> None:
     filled_length = int(round(width * progress))
     bar = "=" * filled_length + " " * (width - filled_length)
-    printable = f"{header}[{bar}] {(progress * 100):.0f}%"
+    printable = f"[{bar}] {(progress * 100):3.0f}% {footer}"
 
     if clear:
         sys.stdout.write(f"\r{' ' * len(printable)}\r")
@@ -77,7 +77,7 @@ def get_args() -> BranchtreeCliArgs:
 def main() -> None:
     args = get_args()
     try:
-        branchtree = tree.build_tree(args.local, args.remote, args.regex)
+        branchtree = tree.build_tree(args.local, args.remote, args.regex, progress=True)
         tree.print_tree(branchtree, args.branch, args.contains, args.tag)
     except GitError as exc:
         print_error(str(exc), exc.code)

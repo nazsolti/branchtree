@@ -76,14 +76,14 @@ def build_tree(
 
     # build tree (add each branch as children to each of its parent)
     for i, branch in enumerate(tree.values()):
-        progress and cli.print_progress(i / len(tree), header="Building tree... ")
+        progress and cli.print_progress(i / len(tree), footer="Building tree... ")
 
         parents = git.get_parents(branch, regexes)
 
         for parent in parents:
             tree[parent.sha].add_child(branch)
 
-    progress and cli.print_progress(1, header="Building tree... ", clear=True)
+    progress and cli.print_progress(1, footer="Building tree... ", clear=True)
 
     # prune tree (remove duplicates, i.e. direct descendants which can be reached through a child at any depth)
     for branch in tree.values():
