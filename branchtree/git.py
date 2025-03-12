@@ -102,4 +102,4 @@ def get_merged(name: str, regex: str | Iterable[str] | None = None) -> list[GitB
 
 
 def tag_exists(tag: str) -> bool:
-    return _run_cmd_code(["git", "show-ref", "--tags", tag]) == 0
+    return _run_cmd_code(["git", "show-ref", "--quiet", "--tags", tag]) == 0
