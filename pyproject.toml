@@ -18,10 +18,9 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "black>=25.1.0"
-]
-dist = [
+    "black>=25.1.0",
     "build>=1.2.2",
+    "taskipy>=1.14.1",
     "twine>=6.1.0"
 ]
 
@@ -33,3 +32,8 @@ Homepage = "https://github.com/nazsolti/branchtree"
 
 [tool.setuptools.dynamic]
 version = {attr = "branchtree.__version__"}
+
+[tool.taskipy.tasks]
+install = "pip install .[dev]"
+build = "rm -rf dist && python -m build"
+publish = "twine upload dist/*"
