@@ -62,9 +62,14 @@ def get_branches(regex: str | Iterable[str] | None = None) -> list[GitBranch]:
     return [branch for branch in branches if _check_regex(regex, branch.name)]
 
 
-def get_parents(
-    child_branch: GitBranch, regex: str | Iterable[str] | None = None
-) -> list[GitBranch]:
+def get_sha_of_rev(rev: str) -> str | None:
+    try:
+        return _run_cmd(["git", "rev-parse", "--verify", "--short", "--quiet", rev])[0]
+    except GitError:
+        return None
+
+
+def get_contains(name: str, regex: str | Iterable[str] | None = None) -> list[GitBranch]:
     # run git shell command to get all branches that contain a specific branch
     output = _run_cmd(
         [
@@ -72,14 +77,16 @@ def get_parents(
             "branch",
             "--all",
             "--contains",
-            child_branch.sha,
+            name,
             "--format=%(refname:short) %(objectname:short)",
         ]
     )
     branches = [GitBranch(*line.split()) for line in output]
 
-    # filter out child branch
-    branches = [branch for branch in branches if branch.sha != child_branch.sha]
+    sha_of_name = get_sha_of_rev(name)
+
+    # filter out self
+    branches = [branch for branch in branches if branch.sha != sha_of_name]
 
     return [branch for branch in branches if _check_regex(regex, branch.name)]
 

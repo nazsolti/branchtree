@@ -41,7 +41,13 @@ parser.add_argument(
     "-c",
     "--contains",
     nargs="*",
-    help="only show branches which contain these branches (if more specified, show branches which contain all of them)",
+    help="only show branches which contain these revisions (can be a branch, tag or any commit specifier, if more specified, show branches which contain all of them)",
+)
+parser.add_argument(
+    "-N",
+    "--no-contains",
+    action="store_true",
+    help="this only has effect if --contains is specified, also show branches which do not contain the given revisions, and instead specify the branches which do contain them",
 )
 parser.add_argument(
     "-t",
@@ -78,6 +84,6 @@ def main() -> None:
     args = get_args()
     try:
         branchtree = tree.build_tree(args.local, args.remote, args.regex, progress=True)
-        tree.print_tree(branchtree, args.branch, args.contains, args.tag)
+        tree.print_tree(branchtree, args.branch, args.contains, args.no_contains, args.tag)
     except GitError as exc:
         print_error(str(exc), exc.code)

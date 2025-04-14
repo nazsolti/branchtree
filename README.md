@@ -48,6 +48,8 @@ usage: branchtree [-h] [--regex REGEX] [-l] [-r] [-b [BRANCH ...]] [-t TAG]
 - `-l, --local`: Only show local branches.
 - `-r, --remote`: Only show remote branches from `origin`. For other remotes, use the `--regex` option.
 - `-b [BRANCH ...], --branch [BRANCH ...]`: Only show the specified branches and their children.
+- `-c [CONTAINS ...], --contains [CONTAINS ...]`: Only show branches which contain these revisions. This can be a branch, tag or any commit specifier. If there's more specified, show branches which contain all of them.
+- `-N, --no-contains`: This only has effect if --contains is specified, also show branches which do not contain the given revisions, and instead specify the branches which do contain them.
 - `-t TAG, --tag TAG`: Show whether each branch is included in the given tag (i.e., merged into the tag).
 
 ## Examples

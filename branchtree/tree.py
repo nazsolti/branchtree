@@ -78,7 +78,7 @@ def build_tree(
     for i, branch in enumerate(tree.values()):
         progress and cli.print_progress(i / len(tree), footer="Building tree... ")
 
-        parents = git.get_parents(branch, regexes)
+        parents = git.get_contains(branch.sha, regexes)
 
         for parent in parents:
             tree[parent.sha].add_child(branch)
@@ -117,6 +117,7 @@ def print_tree(
     tree: list[TreeBranch],
     branches: list[str] | None = None,
     contains: list[str] | None = None,
+    no_contains: bool = False,
     tag: str | None = None,
 ):
     if tag:
@@ -131,11 +132,18 @@ def print_tree(
                 if branch.sha == merged_branch.sha and not branch.name.endswith(f" (in {tag})"):
                     branch.name += f" (in {tag})"
 
+    branches_containing: set[git.GitBranch] = set()
+
+    for name in contains or []:
+        branches_containing.update(git.get_contains(name))
+    
     for branch in tree:
         if branches and not any(name in branch.name for name in branches):
             continue
-        if contains and not all(
-            has_child_name(branch, branch_name) for branch_name in contains
-        ):
-            continue
+        if len(contains) > 0:
+            if branch.sha in [branch.sha for branch in branches_containing]:
+                if no_contains:
+                    branch.name += f" (has {', '.join(contains)})"
+            elif not no_contains:
+                continue
         branch.print_tree()
