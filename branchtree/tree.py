@@ -128,7 +128,7 @@ def print_tree(
 
         for merged_branch in merged_branches:
             for branch in tree:
-                if branch.sha == merged_branch.sha:
+                if branch.sha == merged_branch.sha and not branch.name.endswith(f" (in {tag})"):
                     branch.name += f" (in {tag})"
 
     for branch in tree:
